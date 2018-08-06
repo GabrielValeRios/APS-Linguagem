@@ -13,3 +13,4 @@ Tópicos "WishList":
   - Linguagem terá suporte para recursão, como acesso rápido a "tail", "head" de estruturas de dados.
   - A linguagem terá suporte para println, além do print usual.
   - A linguagem permitirá entrada de dados ao rodar o "Main".
+  - A linguagem permitirá criação de "typos". Ex: typo Vector<Int> = vetor.
