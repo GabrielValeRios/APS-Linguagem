@@ -9,4 +9,4 @@ Tópicos "WishList":
   - Valores booleanos serão encurtados. Ex: "True" = T e "False" = F
   - Os programas irão rodar em um "Main". Ex: " Main(): blablabla"
   - Comandos serão em inglês.
-  - A linguagem terá suporte para println, além do print usual.
+  - A linguagem terá suporte para println.
