@@ -1,0 +1,16 @@
+statments = “{”, statment, “;”, { statment, “;” }, “}” ;
+statment = atribuiton | statments | "printf" ;
+atribuiton = identifier, “=”, expression|"scanf" ;
+expression = term, { (“+” | “-”), term } ;
+term = factor, { (“*” | “/”), factor } ;
+factor = (“+” | “-”), factor | number | “(”, expression, “)” | identifier ;
+identifier = letter, { letter | digito | “_” } ;
+number = digit, { digit } ;
+letter = ( a | ... | z | A | ... | Z ) ;
+digit = ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
+if_stm = 'if' (boolExpress) (statment) ['elif'(boolExpress) (statment)] ['else' (statment)];
+while_stm = 'while' (boolExpress) 'then' (statment);
+boolExpress = boolTerm, {("||"), boolTerm};
+boolTerm = boolFactor, {("&&"), boolFactor};
+boolFactor = {("!", boolFactor)}, relExpress;
+relExpress = expression, {('>'|'<'|'==')}, expression;
