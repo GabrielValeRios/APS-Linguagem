@@ -4,10 +4,10 @@ def Lexer():
 
     lexer = LexerGenerator()
 
-    lexer.add('WHILE', r'while')
-    lexer.add('PRINTF', r'printf')
+    lexer.add('WHILE', r'wh')
+    lexer.add('PRINTF', r'pf')
     lexer.add('IF', r'if')
-    lexer.add('ELSE', r'else')
+    lexer.add('ELSE', r'e')
     lexer.add('MAIN', r'main')
     lexer.add('LEFT_PAREN', r'\(')
     lexer.add('RIGHT_PAREN', r'\)')

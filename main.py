@@ -19,4 +19,5 @@ for token in l.lex(code):
 
 st = SymbolTable()
 
-p.parse(l.lex(code)).Evaluate(st)
+root = p.parse(l.lex(code))
+root.Evaluate(st)

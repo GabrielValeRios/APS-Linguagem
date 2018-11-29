@@ -1,9 +1,8 @@
 from rply import ParserGenerator
-from ast import *
+from ast import IntVal,BinOp,PrintfNode,IfElseNode,WhileNode,StatmentsNode,VarVal
 
 
 def Parser():
-
     pg = ParserGenerator(
         ['MAIN','INT','PRINTF','IF','ELSE','WHILE','IDENTIFIER','SEMI_COLON',
         'LEFT_BRACKETS','RIGHT_BRACKETS','PLUS','E_EQUAL','EQUAL',
@@ -23,15 +22,17 @@ def Parser():
 
     @pg.production('statments : statment')
     def statments(p):
-        stmnt = StatmentsNode([p[0]])
-        return stmnt
+        stmnts = StatmentsNode([p[0]])
+        return stmnts
 
-    @pg.production('statment : statment statments')
+    @pg.production('statments : statment statments')
     def statment_statments(p):
-        if type(p[1]) is StatmentsNode:
+        if isinstance(p[1],StatmentsNode):
+            p[1].children.insert(0,p[0])
             stmnt = p[1]
         else:
-            stmnt = StatmentsNode([p[1]])       
+            stmnt = StatmentsNode([p[1]]) 
+
         return stmnt
 
     @pg.production('statment : IDENTIFIER EQUAL expression SEMI_COLON')

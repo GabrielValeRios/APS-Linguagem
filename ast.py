@@ -19,7 +19,6 @@ class BinOp(Node):
 
     def Evaluate(self, symbolTable):
         if self.value == "=":
-            #print(self.children[0],self.children[1].Evaluate(symbolTable),self.value)
             symbolTable.createValue(self.children[0],self.children[1].Evaluate(symbolTable))
         else: 
             if self.value == '+':
@@ -87,10 +86,11 @@ class SymbolTable():
         self.symbolTable = {} 
 
     def getValue(self, key):
-        print("OLAA", self.symbolTable)
+        key = str(key)
+        #print("key", key, self.symbolTable)
         if key in self.symbolTable:
             return self.symbolTable.get(key)
 
     def createValue(self,key,value):
-        #print("oi",key,value)
-        self.symbolTable['{}'.format(key)] = value    
+        self.symbolTable['{}'.format(key)] = value
+        #print("createValue", self.symbolTable)  
