@@ -52,8 +52,8 @@ def Parser():
 
     @pg.production('statment : IF LEFT_PAREN bool_expression RIGHT_PAREN LEFT_BRACKETS statments RIGHT_BRACKETS')
     def if_stat(p):
-        _if = IfElseNode([p[2],p[5],None])
-        return _if
+        if_st = IfElseNode([p[2],p[5],None])
+        return if_st
 
     @pg.production('statment : IF LEFT_PAREN bool_expression RIGHT_PAREN LEFT_BRACKETS statments RIGHT_BRACKETS ELSE LEFT_BRACKETS statments RIGHT_BRACKETS')
     def if_else_stat(p):
@@ -78,12 +78,17 @@ def Parser():
         e_s = BinOp(p[1].getstr(),[p[0],p[2]])
         return e_s
 
+    @pg.production('bool_expression : relExpression')
+    def bool_expression(p):
+        b_e = p[0]
+        return b_e
+
     @pg.production('bool_expression : relExpression OR relExpression')
     @pg.production('bool_expression : relExpression AND relExpression')
     @pg.production('bool_expression : relExpression NOT relExpression')
-    def bool_expression(p):
-        b_e = BinOp(p[1].getstr(),[p[0],p[2]])
-        return b_e
+    def bool_expression_double(p):
+        b_e_d = BinOp(p[1].getstr(),[p[0],p[2]])
+        return b_e_d
 
     @pg.production('relExpression : expression BT expression')
     @pg.production('relExpression : expression LT expression')
