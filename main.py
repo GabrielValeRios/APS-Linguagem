@@ -1,6 +1,7 @@
+# ref : https://blog.usejournal.com/writing-your-own-programming-language-and-compiler-with-python-a468970ae6df
+
 from lexer import Lexer
 from parser import Parser
-from ast import SymbolTable
 import sys
 
 with open("test") as f:
@@ -12,12 +13,12 @@ for line in content:
     code+=line
 
 l = Lexer()
-p = Parser()
 
 for token in l.lex(code):
-    print(token)    
+    print(token)
 
-st = SymbolTable()
+p = Parser()   
 
 root = p.parse(l.lex(code))
-root.Evaluate(st)
+#print("root",root.children[0].children[1].children[1].children[0].value)
+root.Evaluate()

@@ -1,13 +1,17 @@
 from rply import ParserGenerator
-from ast import IntVal,BinOp,PrintfNode,IfElseNode,WhileNode,StatmentsNode,VarVal
+from ast import *
 
+#ref{
+    # https://blog.usejournal.com/writing-your-own-programming-language-and-compiler-with-python-a468970ae6df
+    # https://media.readthedocs.org/pdf/rply/latest/rply.pdf
+#}
 
 def Parser():
     pg = ParserGenerator(
         ['MAIN','INT','PRINTF','IF','ELSE','WHILE','IDENTIFIER','SEMI_COLON',
         'LEFT_BRACKETS','RIGHT_BRACKETS','PLUS','E_EQUAL','EQUAL',
         'MINUS','MULT','DIV','LEFT_PAREN','RIGHT_PAREN','OR','AND',
-        'BT','LT','NOT'],
+        'BT','LT','NOT','COMMA','RETURN'],
 
         precedence=[
         ('left', ['PLUS', 'MINUS']),
@@ -16,9 +20,44 @@ def Parser():
         ]
     )
 
-    @pg.production('program : MAIN LEFT_PAREN RIGHT_PAREN LEFT_BRACKETS statments RIGHT_BRACKETS')
+    @pg.production('program : funcStatments')
     def program(p):
-        return p[4]
+        return p[0]
+
+    @pg.production('funcStatments : funcDec')
+    def func_stats(p):
+        return p[0]
+
+    @pg.production('funcStatments : funcDec funcStatments')
+    def funcs_stat(p):
+        m_n = masterNode([p[0]])
+        if isinstance(p[1],funcDec):
+            m_n.children.append(p[1])
+
+        mainCall = funcCall('mn',[])
+        m_n.children.append(mainCall)
+        return m_n
+
+    @pg.production('funcDec : MAIN LEFT_PAREN RIGHT_PAREN LEFT_BRACKETS statments RIGHT_BRACKETS')
+    def func_dec_main(p):
+        children = [None,p[4]]
+        f_d = funcDec(p[0].getstr(),children)
+        return f_d
+
+    @pg.production('funcDec : IDENTIFIER LEFT_PAREN args RIGHT_PAREN LEFT_BRACKETS statments RIGHT_BRACKETS')
+    def func_dec(p):
+        children = [p[2],p[5]]
+        f_d = funcDec(p[0].getstr(),children)
+        return f_d
+
+    @pg.production('args : IDENTIFIER')
+    def arg(p):
+        arg_node = VarDecNode([p[0].getstr()])
+        return arg_node
+
+    @pg.production('args : IDENTIFIER COMMA args')
+    def args(p):
+        return VarDecNode([p[0],p[2]])
 
     @pg.production('statments : statment')
     def statments(p):
@@ -27,12 +66,13 @@ def Parser():
 
     @pg.production('statments : statment statments')
     def statment_statments(p):
+        stmnt = None
         if isinstance(p[1],StatmentsNode):
             p[1].children.insert(0,p[0])
             stmnt = p[1]
         else:
-            stmnt = StatmentsNode([p[1]]) 
-
+            stmnt = StatmentsNode([p[0]])
+ 
         return stmnt
 
     @pg.production('statment : IDENTIFIER EQUAL expression SEMI_COLON')
@@ -40,9 +80,14 @@ def Parser():
         atr = BinOp(p[1].getstr(),[p[0].getstr(),p[2]])
         return atr
 
-    @pg.production('statment : PRINTF LEFT_PAREN expression RIGHT_PAREN SEMI_COLON')
+    @pg.production('statment : IDENTIFIER EQUAL funcCall SEMI_COLON')
+    def func_call(p):
+        atr_call = BinOp(p[1].getstr(),[p[0].getstr(),p[2]])
+        return atr_call
+
+    @pg.production('statment : PRINTF expression SEMI_COLON')
     def printf_stat(p):
-        pf = PrintfNode([p[2]])
+        pf = PrintfNode([p[1]])
         return pf
 
     @pg.production('statment : WHILE LEFT_PAREN bool_expression RIGHT_PAREN LEFT_BRACKETS statments RIGHT_BRACKETS')
@@ -59,6 +104,20 @@ def Parser():
     def if_else_stat(p):
         if_else = IfElseNode([p[2],p[5],p[9]])
         return if_else
+
+    @pg.production('statment : RETURN expression SEMI_COLON')
+    def return_stat(p):
+        r_stat = returnNode([p[1]])
+        return r_stat
+
+    @pg.production('funcCall : IDENTIFIER LEFT_PAREN expression RIGHT_PAREN')
+    def func_call(p):
+        f_call = funcCall(p[0].getstr(),[p[2]])
+        return f_call
+
+    @pg.production('expression : expression COMMA expression')
+    def expr_expr(p):
+        return [p[0],p[2]]
 
     @pg.production('expression : INT')
     def expr_numb(p):
