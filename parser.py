@@ -26,16 +26,23 @@ def Parser():
 
     @pg.production('funcStatments : funcDec')
     def func_stats(p):
-        return p[0]
+
+        m_n = masterNode([p[0]])
+        mainCall = funcCall('mn',[])
+        m_n.children.append(mainCall)
+        return m_n
 
     @pg.production('funcStatments : funcDec funcStatments')
     def funcs_stat(p):
         m_n = masterNode([p[0]])
+
         if isinstance(p[1],funcDec):
             m_n.children.append(p[1])
-
+        else:
+            m_n.children.append(p[1].children[0])
         mainCall = funcCall('mn',[])
         m_n.children.append(mainCall)
+        print("OPAAA", m_n.children)
         return m_n
 
     @pg.production('funcDec : MAIN LEFT_PAREN RIGHT_PAREN LEFT_BRACKETS statments RIGHT_BRACKETS')
@@ -46,6 +53,7 @@ def Parser():
 
     @pg.production('funcDec : IDENTIFIER LEFT_PAREN args RIGHT_PAREN LEFT_BRACKETS statments RIGHT_BRACKETS')
     def func_dec(p):
+        print("func_dec_alnoe",p[0].getstr())
         children = [p[2],p[5]]
         f_d = funcDec(p[0].getstr(),children)
         return f_d
